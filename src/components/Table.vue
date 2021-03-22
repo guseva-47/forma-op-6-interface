@@ -8,7 +8,8 @@
           :row="row"
           :index="index"
           :time="time"
-          />
+        />
+        <fake-row :addRow="addRow" />
       </tbody>
       <table-footer :time="time" :table="this.table" :itog="itog" />
     </table>
@@ -18,13 +19,15 @@
 import TableHead from './TableHead'
 import TableFooter from './TableFooter'
 import R from './r'
+import FakeRow from './FakeRow'
 
 export default {
   props: ["table", "time", "itog"],
   components: {
     TableHead,
     TableFooter,
-    R
+    R,
+    FakeRow
   },
   data() {
     return {
@@ -34,18 +37,36 @@ export default {
     // console.log(this.table)
   },
   methods: {
-    async getTable(id) {
-      await api
-        .getTable(id)
-        .then((result) => {
-          this.table = result.data;
-          this.table.gameSystem = this.gameSystemTitle(this.table.gameSystem);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-    
+    addRow() {
+      this.table.push(
+        { 
+        id: this.table[this.table.length - 1].id + 1,
+        product: {
+          title: "",
+          kod: ""
+        },
+        edinica: {
+          title: "",
+          kod: ""
+        },
+        izdelia: [0, 0, 0, 0, 0, 0],
+        vozvrat: 0,
+        itogo: {
+          count: 0,
+          price1: {
+            p: 0,
+            c: 0
+          },
+          price2: {
+            p: 0,
+            c: 0
+          }
+
+        },
+        primecnanie: ''
+      },
+      )
+    }    
   },
   
 };
@@ -56,6 +77,7 @@ export default {
 
 .bl {
   border-right: rgb(13, 110, 253) solid 2px;
+  background-color: azure;
 }
 .bb {
   border-bottom: rgb(13, 110, 253) solid 1px;    
