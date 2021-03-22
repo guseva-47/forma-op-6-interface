@@ -15,15 +15,15 @@ export default new Vuex.Store({
     },
     headPeople: {
       organization: "Сладкая ложка",
-      otpravitel: '',
-      poluchatel: '',
+      otpravitel: 'Столовая №1',
+      poluchatel: 'Буфет №1',
       matLico: {
-        doljnost: '',
-        fio: ''
+        doljnost: 'Начальник производства',
+        fio: 'Сомова Антонина Николаевна'
       },
       rukovoditel: {
-        doljnost: '',
-        fio: ''
+        doljnost: 'Директор',
+        fio: 'Началова Т. К.'
       },
       glavbuh: 'Мамонтова Л. А.'
     },
@@ -31,28 +31,28 @@ export default new Vuex.Store({
       { 
         id:1,
         product: {
-          title: "Грибы",
-          kod: ""
+          title: "Грибы соленые",
+          kod: "1121"
         },
         edinica: {
-          title: "sm",
-          kod: ""
+          title: "ШТ",
+          kod: "796"
         },
-        izdelia: [10, 20, 30, 40, 50, 60],
+        izdelia: [10, 0, 0, 0, 0, 0],
         vozvrat: 0,
         itogo: {
           count: 0,
           price1: {
-            p: 0,
-            c: 0
+            p: 7,
+            c: 70
           },
           price2: {
-            p: 0,
-            c: 0
+            p: 10,
+            c: 100
           }
 
         },
-        primecnanie: 'tra ta ta'
+        primecnanie: 'Банки литровые'
       },
       { 
         id:2,
@@ -61,7 +61,7 @@ export default new Vuex.Store({
           kod: ""
         },
         edinica: {
-          title: "sm",
+          title: "",
           kod: ""
         },
         izdelia: [0, 0, 0, 0, 0, 0],
@@ -78,17 +78,13 @@ export default new Vuex.Store({
           }
 
         },
-        primecnanie: 'tra ta ta'
+        primecnanie: ''
       },
     ],
     time: {
       time: ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
       count: 1,
     },
-
-    count: 0,
-    user: null,
-    tables: [],
   },
   getters: {
     getHeadBase(state) {
@@ -127,33 +123,6 @@ export default new Vuex.Store({
     },
     updateHeadBase({ commit }, headBase) {
       commit('setHeadBase', headBase)
-    },
-    async unauthorize(context) {
-      context.commit('setUser', null);
-    },
-
-    async getTables({ commit }) {
-      await api
-        .getTables()
-        .then((result) => {
-          let tables = result.data;
-          commit('setTables', tables);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-
-    async deleteTable({ commit }, table) {
-      let tableId = table.id;
-      await api
-        .deleteTable(tableId)
-        .then((result) => {
-          if (result.status === 200) {
-            commit('deleteTable', table);
-          }
-        });
-    }
-    
+    },    
   }
 })

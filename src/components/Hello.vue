@@ -41,19 +41,17 @@
       </div>
 
       <table-product :table="this.table" :time="this.time" :itog="itog" />
+      <button type="button" class="btn btn-primary float-end" v-on:click="exportToXLSX">Экспорт в xlsx</button>
       </div>
     </section>
   </div>
 </template>
 
 <script>
-// TODO: 
-//       удаление строки, мб столбца времени
-//       css
-//       сохранение в файл
 import BaseData from './BaseData';
 import People from './People';
 import TableProduct from './Table';
+import * as XLSX from 'xlsx';
 
 export default {
   components: {
@@ -134,39 +132,78 @@ export default {
       this.$store.dispatch('setTable', table)
     },
 
+    createBook(filename, sheetname, sheetData) {
+      const book = XLSX.utils.book_new();
 
-    async getTables() {
-      await this.$store.dispatch('getTables');
+      book.SheetNames.push(sheetname);
+      book.Sheets[sheetname] = XLSX.utils.aoa_to_sheet(sheetData);
+
+      XLSX.writeFile(book, filename);
     },
-    async deleteTable(table) {
-      await this.$store.dispatch('deleteTable', table);
-      this.tables = this.$store.state.tables;
+    excelTableHead() {
+      const times = this.time.time
+      const data = [
+        ['#', 'Продукция', '', '	Единица измерения', '', 'Отпущено продукции (изделий)', '', '', '', '', '', 'Возвращено', '	Итого отпущено с учетом возврата', '', '', '', '', 'Примечание'],
+        ['', 'наименование', 'код', 'наименование', 'код по ОКЕИ', 'время отпуска, ч.мин.', '', '', '', '', '', 'продукции (изделий)', 'кол-во', 'по учетным ценам', '', 'по ценам продажи', '', ''],
+        ['', '', '', '', '', times[0], times[1], times[2], times[3], times[4], times[5], '', '', 'цена руб.коп.', 'сумма руб.коп.', 'цена руб.коп.', 'сумма руб.коп.', ''],
+      ]
+      return data;
     },
-    isOwner(table) {
-      if(this.$store.state.user && table){
-        return this.$store.state.user.id == table.owner.id;
-      }
-      return false;
+    excelTableFooter() {
+      const i = this.itog;
+      const data = [
+        ['', '', '', '', 'Итого', i.izdelia[0], i.izdelia[1], i.izdelia[2], i.izdelia[3], i.izdelia[4], i.izdelia[5], i.vozvrat, i.kolich, '', i.c1, '', i.c2, ''],
+      ]
+      return data;
+    },
+    excelHead() {
+      const data = [
+        ['', '', '', 'Код', ],
+        ['', '', 'Форма по ОКУД', '0330506'],
+        ['Организация', this.peopleDate.organization, 'по ОКП',  this.base.okp],
+        ['структурное подразделение \"отправитель\"', this.peopleDate.otpravitel],
+        ['структурное подразделение \"получатель\"', this.peopleDate.poluchatel],
+        ['', '','Вид деятельности по ОКДП', this.base.okdp],
+        ['', '','Вид операции', this.base.vidoperac],
+        [''],
+        ['','ДНЕВНОЙ ЗАБОРНЫЙ ЛИСТ', this.base.n, this.base.date],
+        ['Материально ответственное лицо', this.peopleDate.matLico.doljnost, this.peopleDate.matLico.fio],
+        ['Руководитель', this.peopleDate.rukovoditel.doljnost, this.peopleDate.rukovoditel.fio],
+        ['Главный (старший) бухгалтер', this.peopleDate.glavbuh],
+        [''],
+      ]
+      return data;
+    },
+    excelTableBody() {
+      const data = [];
+      this.table.forEach(row => {
+        const dataRow = [''];
+        dataRow.push(row.product.title);
+        dataRow.push(row.product.kod);
+        dataRow.push(row.edinica.title);
+        dataRow.push(row.edinica.kod);
+        row.izdelia.forEach(elem => dataRow.push(elem));
+        dataRow.push(row.vozvrat);
+        dataRow.push(row.itogo.count);
+        dataRow.push(row.itogo.price1.p);
+        dataRow.push(row.itogo.price1.c);
+        dataRow.push(row.itogo.price2.p);
+        dataRow.push(row.itogo.price2.c);
+        dataRow.push(row.primecnanie);
+
+        data.push(dataRow);
+      })
+      return data;
+    },
+    exportToXLSX() {
+      const data = this.excelHead();
+      this.excelTableHead().forEach(row => data.push(row));
+      this.excelTableBody().forEach(row => data.push(row));
+      this.excelTableFooter().forEach(row => data.push(row));
+      console.log(data)
+      this.createBook('op-6.xlsx', 'OP-6', data);
     }
-  },
+  }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.bl {
-  border-right: rgb(13, 110, 253) solid 2px;
-}
-.bb {
-  border-bottom: rgb(13, 110, 253) solid 1px;    
-}
-#bbl {
-  border-right: rgb(13, 110, 253) solid 2px;
-  border-bottom: rgb(13, 110, 253) solid 1px;    
-}
-
-.bbl {
-  border-right: rgb(13, 110, 253) solid 2px;
-  border-bottom: rgb(13, 110, 253) solid 1px;    
-}
-</style>

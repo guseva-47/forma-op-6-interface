@@ -72,24 +72,4 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
 
-.bl {
-  border-right: rgb(13, 110, 253) solid 2px;
-  background-color: azure;
-}
-.bb {
-  border-bottom: rgb(13, 110, 253) solid 1px;    
-}
-#bbl {
-  border-right: rgb(13, 110, 253) solid 2px;
-  border-bottom: rgb(13, 110, 253) solid 1px;    
-}
-
-.bbl {
-  border-right: rgb(13, 110, 253) solid 2px;
-  border-bottom: rgb(13, 110, 253) solid 1px;    
-}
-
-</style>

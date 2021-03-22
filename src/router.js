@@ -1,10 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/Hello'
-import People from '@/components/People'
-import EditTable from '@/components/EditTable'
-
-import store from './store'
 
 Vue.use(Router);
 

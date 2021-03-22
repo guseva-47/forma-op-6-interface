@@ -5,7 +5,7 @@
       <!-- наименование -->
       <td scope="col" class="text-center bl">
             <button 
-              class="btn btn-outline-secondary m-0" 
+              class="btn btn-outline-secondary" 
               data-bs-toggle="tooltip" 
               data-bs-placement="right"
               title="Добавить строку"
